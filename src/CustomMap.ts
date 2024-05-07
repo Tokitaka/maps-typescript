@@ -1,38 +1,44 @@
-import { User } from './User';
-import { Company } from './Company';
+interface Mappable {
+  name: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+}
 
 export class CustomMap {
   private googleMap: google.maps.Map;
 
-  constructor(divId: string) {
-    this.googleMap = new google.maps.Map(
-      document.getElementById(divId) as HTMLElement,
-      {
-        mapId: 'DEMO_MAP_ID',
-        center: {
-          lat: 0,
-          lng: 0,
-        },
-        zoom: 1,
-      }
-    );
-  }
+  async initMap(divId: string): Promise<void> {
+    const { Map } = (await google.maps.importLibrary(
+      'maps'
+    )) as google.maps.MapsLibrary;
 
-  addMarkerOnUser(user: User): void {
-    new google.maps.marker.AdvancedMarkerElement({
-      map: this.googleMap,
-      position: {
-        lat: user.location.lat,
-        lng: user.location.lng,
+    this.googleMap = new Map(document.getElementById(divId) as HTMLElement, {
+      mapId: 'DEMO_MAP_ID',
+      center: {
+        lat: 0,
+        lng: 0,
       },
+      zoom: 1,
     });
   }
-  addMarkerOnCompany(company: Company): void {
-    new google.maps.marker.AdvancedMarkerElement({
+
+  constructor(divId: string) {
+    this.initMap(divId);
+  }
+
+  async addMarker(mappable: Mappable): Promise<void> {
+    const { AdvancedMarkerElement } = (await google.maps.importLibrary(
+      'marker'
+    )) as google.maps.MarkerLibrary;
+
+    new AdvancedMarkerElement({
+      title: mappable.name,
       map: this.googleMap,
       position: {
-        lat: company.location.lat,
-        lng: company.location.lng,
+        lat: mappable.location.lat,
+        lng: mappable.location.lng,
       },
     });
   }
