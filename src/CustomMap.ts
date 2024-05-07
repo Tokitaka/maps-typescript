@@ -27,5 +27,13 @@ export class CustomMap {
       },
     });
   }
-  addMarkerOnCompany(company: Company): void {}
+  addMarkerOnCompany(company: Company): void {
+    new google.maps.marker.AdvancedMarkerElement({
+      map: this.googleMap,
+      position: {
+        lat: company.location.lat,
+        lng: company.location.lng,
+      },
+    });
+  }
 }
