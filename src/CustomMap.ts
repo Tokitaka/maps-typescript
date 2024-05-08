@@ -1,5 +1,6 @@
 interface Mappable {
   name: string;
+  content: string;
   location: {
     lat: number;
     lng: number;
@@ -33,13 +34,32 @@ export class CustomMap {
       'marker'
     )) as google.maps.MarkerLibrary;
 
-    new AdvancedMarkerElement({
+    const marker = new AdvancedMarkerElement({
       title: mappable.name,
       map: this.googleMap,
       position: {
         lat: mappable.location.lat,
         lng: mappable.location.lng,
       },
+    });
+
+    const infoWindow = new google.maps.InfoWindow({
+      content: `
+      <h1>${mappable.name}</h1> 
+      <div>${mappable.content}</div>
+      `,
+      ariaLabel: mappable.name,
+    });
+
+    marker.addListener('click', () => {
+      infoWindow.open({
+        anchor: marker,
+        map: this.googleMap,
+      });
+    });
+
+    infoWindow.addListener('closeclick', () => {
+      infoWindow.close();
     });
   }
 }
